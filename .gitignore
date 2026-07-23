@@ -3,5 +3,7 @@
 # Secrets
 data/*
 private/*
+#experiments
+notebooks/*
 # Outputs
 result/*
