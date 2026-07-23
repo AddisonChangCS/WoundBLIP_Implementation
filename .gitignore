@@ -1,0 +1,7 @@
+# IDE
+.vscode/
+# Secrets
+data/*
+private/*
+# Outputs
+result/*
