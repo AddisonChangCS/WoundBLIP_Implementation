@@ -1,0 +1,23 @@
+[
+  {
+    "role": "system",
+    "content": "You are a wound care physician."
+  },
+  {
+    "role": "user",
+    "content": 
+    [
+      {
+        "type": "image_url",
+        "image_url": 
+        {
+          "url": "data:image/jpeg;base64,{{image_base64}}"
+        }
+      },
+      {
+        "type": "text",
+        "text": "The wound image was labeled as {{label}}. Please briefly describe the image in 1 sentence."
+      }
+    ]
+  }
+]
