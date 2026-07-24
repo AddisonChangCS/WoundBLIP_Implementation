@@ -1,9 +1,10 @@
 # IDE
 .vscode/
 # Secrets
-data/*
-private/*
+data/
+private/
 #experiments
-notebooks/*
+notebooks/
 # Outputs
-result/*
+__pycache__/
+result/
