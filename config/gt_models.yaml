@@ -2,12 +2,14 @@ default_model: "gemini"
 
 models:
   gemini:
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai/"
     model_name: "gemini-2.5-flash"
     api_key_env: "GEMINI_API_KEY"
     max_token: 4000
     temperature: 0.1
 
   gpt:
+    base_url: "https://api.openai.com/v1"
     model_name: "gpt-4o"
     api_key_env: "OPENAI_API_KEY"
     max_token: 2000
