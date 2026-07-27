@@ -135,13 +135,13 @@ def run_stage(
                 n_success += 1
                 print(f"[OK] finish {img_path.name}")
             except AuthenticationError as e:
-                print(f"[FATAL] API key verification failed, aborting:{e}")
+                print(f"[FATAL] API key verification failed, aborting")
                 break
             except RateLimitError as e:
-                print(f"[FAILED] {img_path.name} Insufficient quota or rate limit exceeded:{e}")
+                print(f"[FAILED] {img_path.name} Insufficient quota or rate limit exceeded")
                 n_failed += 1
             except APIError as e:
-                print(f"[FAILED] {img_path.name} API error:{e}")
+                print(f"[FAILED] {img_path.name} API error")
                 n_failed += 1
 
     if csv_path.exists():
