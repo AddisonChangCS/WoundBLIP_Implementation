@@ -50,8 +50,8 @@ def get_csv_path(label: str) -> Path:
     return paths.RESULT_DIR / f"{label}_gt.csv"
 
 def sort_csv_by_id(csv_path: Path) -> None:
-    df = pd.read_csv(csv_path)
-    df["_sort_key"] = df["ID"].astype(str)
+    df = pd.read_csv(csv_path, dtype={"ID": str})
+    df["_sort_key"] = df["ID"]
     df = df.sort_values("_sort_key").drop(columns="_sort_key")
     df.to_csv(csv_path, index=False)
 
@@ -83,7 +83,7 @@ def load_processed_ids(csv_path: Path) -> set:
         set: processed ids in previous csv 
     """
     try:
-        result_df = pd.read_csv(csv_path)
+        result_df = pd.read_csv(csv_path, dtype={"ID": str})
         return set(result_df["ID"].astype(str))
     except(FileNotFoundError, pd.errors.EmptyDataError):
         return set()
@@ -94,7 +94,7 @@ def list_images(label: str) -> list[Path]:
     label_dir = paths.DATA_DIR / label
     if not label_dir.exists():
         raise FileNotFoundError(f"Can't find dir: {label_dir}")
-    return sorted(label_dir.glob("*.jpg"))
+    return sorted(label_dir.glob("*.jpg"), key=lambda p: p.stem.zfill(PAD_WIDTH))
 
 #--------------------main----------------------------#
 
