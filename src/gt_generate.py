@@ -3,6 +3,7 @@
 import base64
 import json
 from pathlib import Path
+from time import sleep
  
 import pandas as pd
 from dotenv import load_dotenv
@@ -143,6 +144,8 @@ def run_stage(
             except APIError as e:
                 print(f"[FAILED] {img_path.name} API error")
                 n_failed += 1
+            sleep(2)
+
 
     if csv_path.exists():
         sort_csv_by_id(csv_path)
