@@ -48,7 +48,7 @@ def generate_caption(client: OpenAI, model_cfg: dict, messages: list[dict]) -> s
     return response.choices[0].message.content
 
 def get_csv_path(label: str) -> Path:
-    return paths.RESULT_DIR / f"{label}_gt.csv"
+    return paths.DATA_DIR / f"{label}_gt.csv"
 
 def sort_csv_by_id(csv_path: Path) -> None:
     df = pd.read_csv(csv_path, dtype={"ID": str})
