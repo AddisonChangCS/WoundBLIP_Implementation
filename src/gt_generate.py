@@ -8,8 +8,10 @@ from time import sleep
 import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI, APIError, RateLimitError, AuthenticationError
- 
-from config import paths, GT_MODELS_CONFIG
+from omegaconf import DictConfig
+
+from config.manager import ConfigManager
+from config import paths
 
 PAD_WIDTH = 3
 #----------------utils---------------------#
@@ -28,22 +30,19 @@ def render_prompt(prompt_template: str, image_base64: str, label: str):
 
     return json.loads(rendered)
 
-def get_model_config(model_key: str):
-    return GT_MODELS_CONFIG["models"][model_key]
-
-def build_client(model_cfg: dict) -> OpenAI:
+def build_client(model_cfg: DictConfig) -> OpenAI:
     import os
     api_key = os.getenv(model_cfg["api_key_env"])
     if not api_key:
-        raise ValueError(f"can't find api_key name:{model_cfg['api_key_env']} in .env file")
-    return OpenAI(api_key=api_key, base_url=model_cfg["base_url"])
+        raise ValueError(f"can't find api_key name:{model_cfg.api_key_env} in .env file")
+    return OpenAI(api_key=api_key, base_url=model_cfg.base_url)
 
-def generate_caption(client: OpenAI, model_cfg: dict, messages: list[dict]) -> str:
+def generate_caption(client: OpenAI, model_cfg: DictConfig, messages: list[dict]) -> str:
     response = client.chat.completions.create(
-        model=model_cfg["model_name"],
+        model=model_cfg.model_name,
         messages=messages,
-        max_tokens=model_cfg["max_token"],
-        temperature=model_cfg["temperature"],
+        max_tokens=model_cfg.max_token,
+        temperature=model_cfg.temperature,
     )
     return response.choices[0].message.content
 
@@ -113,8 +112,12 @@ def run_stage(
     Returns:
         Path: path of result
     """
+    load_dotenv(paths.ENV_PATH)
 
-    model_cfg=get_model_config(model_key)
+    model_cfg=ConfigManager(paths.GT_PATH).cfg.models.get(model_key)
+    if model_cfg is None:
+        raise KeyError(f"Can't find model: {model_key}  in {paths.GT_PATH}")
+    
     prompt_template = read_prompt(prompt_name)
     csv_path=get_csv_path(label)
     processed_ids = load_processed_ids(csv_path)
@@ -123,8 +126,6 @@ def run_stage(
     n_success=0
 
     image_paths = list_images(label)
-
-    load_dotenv(paths.ENV_PATH)
     client = build_client(model_cfg)
 
     for img_path in image_paths:
