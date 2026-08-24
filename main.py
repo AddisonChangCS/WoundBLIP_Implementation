@@ -3,6 +3,8 @@
 Usage:
     python main.py gt-generate --label Ulcer
     python main.py gt-generate --label Ulcer --model gemini-3.1-lite --prompt gt_prompt_v0.json
+    python main.py train --config config/train_config.yaml
+    python main.py infer --config config/train_config.yaml
 """
 import argparse
 import pandas as pd
@@ -90,6 +92,7 @@ def main() -> None:
         # model
         model, processor= load_model_and_processor(
             model_name=cfg.model.name,
+            device=cfg.device,
             freeze_vision_encoder=cfg.model.freeze_vision_encoder,
         )
 
@@ -118,7 +121,7 @@ def main() -> None:
             val_loader=val_loader,
             model=model,
         )
-        best_model_path = trainer.fit()
+        best_model_path = trainer.train()
         processor.save_pretrained(best_model_path)
 
         manager.save(run_dir / "config_resolved.yaml")
