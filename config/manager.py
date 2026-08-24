@@ -1,6 +1,7 @@
 from pathlib import Path
 import torch
 from omegaconf import OmegaConf, DictConfig
+from config import paths
 
 class ConfigManager:
     def __init__(self, config_path: str):
@@ -14,11 +15,20 @@ class ConfigManager:
             raise FileNotFoundError(f"config not exist: {self.config_path.resolve()}")
         self._cfg: DictConfig = OmegaConf.load(self.config_path)
 
+        self._resolve_run_dir()
         self._resolve_device()
 
     @property
     def cfg(self) -> DictConfig:
         return self._cfg
+    
+    def _resolve_run_dir(self):
+        """Resolve and build run dir under result dir
+        """
+        run_dir_name = self._cfg.run_dir
+        run_dir = (paths.RESULT_DIR / run_dir_name).resolve()
+        run_dir.mkdir(parents=True, exist_ok=True)
+        OmegaConf.update(self._cfg, "run_dir", str(run_dir))
 
     def _resolve_device(self):
         """
