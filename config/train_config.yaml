@@ -1,0 +1,28 @@
+run_name: "epoch20_lr1e-5"
+run_dir: "exp001"
+device: auto  # auto -> resolved to cuda/cpu at runtime by ConfigManager
+ 
+model:
+  name: "Salesforce/blip-image-captioning-base"
+  freeze_vision_encoder: true
+ 
+data:
+  random_state: 42
+  test_size: 0.1       
+  val_size: 0.1       
+  image_col: "Image"
+  text_col: "Caption"
+  max_length: 64        # collator tokenization max length
+ 
+training:
+  epochs: 20
+  lr: 1.0e-5
+  batch_size: 16
+  num_workers: 4
+  pin_memory: true
+  drop_last: true        # 避免最後一個 batch size 不足造成 batchnorm 等問題
+  persistent_workers: true
+  max_norm: 1.0
+ 
+inference:
+  max_new_tokens: 150
